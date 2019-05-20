@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 import numpy as np
@@ -53,13 +53,7 @@ def findtext(imgcolorc,imgcolors):
 
     grayimage = cv2.GaussianBlur(grayimage,(9,9),0)
     _,th = cv2.threshold(grayimage,sum,255,0)
-    arr =[]
-    arr2 =[]
-    countp=0
     _,contours,_ = cv2.findContours(th,cv2.RETR_CCOMP,cv2.CHAIN_APPROX_SIMPLE)
-    fcount=0
-    flag=0
-    count=0
 
     max = 0
     for i in range(1,len(contours)):
@@ -70,32 +64,19 @@ def findtext(imgcolorc,imgcolors):
     textarr=[]
     origarr=[]
     xarr=[]
-    count=0
+    
     for i in range(0,len(contours)):
         cnt = contours[i]
         x,y,w,h = cv2.boundingRect(cnt) 
         if w*h<(int)(max*0.3):
             continue;
-        tmp = th[y:y+h,x:x+w]
-        textarr.append(tmp.copy())
-        tmp = img[y:y+h,x:x+w]
-        origarr.append(tmp.copy())
-        xarr.append(x.copy())
+        tmp = (th[y:y+h,x:x+w],x)
+        textarr.append(tmp)
+        tmp = (img[y:y+h,x:x+w],x)
+        origarr.append(tmp)
+        
+    origarr.sort(key = lambda element : element[1])
+    textarr.sort(key = lambda element : element[1])
     
-    xlength = len(xarr)
-    for i in range(0,xlength):
-        for j in range(0,xlength):
-            if xarr[i]>xarr[j]:
-                tmp = xarr[i].copy()
-                xarr[i] = xarr[j].copy()
-                xarr[j] = tmp.copy()
-                
-                tmp = origarr[i].copy()
-                origarr[i]=origarr[j].copy()
-                origarr[j]=tmp.copy()
-                
-                tmp = textarr[i].copy()
-                textarr[i]=textarr[j].copy()
-                textarr[j]=tmp.copy()
     return origarr,textarr
 
